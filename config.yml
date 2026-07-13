@@ -1,0 +1,959 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Barbearia Schroeder</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Jost:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#0F0D0A;
+    --charcoal:#1C1712;
+    --charcoal-2:#241E17;
+    --gold:#C9A227;
+    --gold-light:#E8CD7A;
+    --oxblood:#5C1F1F;
+    --oxblood-light:#8C3A3A;
+    --parchment:#EDE3CC;
+    --parchment-dim:#B8AE97;
+  }
+
+  *{box-sizing:border-box; margin:0; padding:0;}
+
+  html{scroll-behavior:smooth;}
+
+  body{
+    background:var(--ink);
+    color:var(--parchment);
+    font-family:'Jost', sans-serif;
+    font-weight:300;
+    line-height:1.6;
+    overflow-x:hidden;
+  }
+
+  ::selection{ background:var(--gold); color:var(--ink); }
+
+  h1,h2,h3, .display{
+    font-family:'Cormorant Garamond', serif;
+    font-weight:600;
+    letter-spacing:0.02em;
+  }
+
+  a{ color:inherit; text-decoration:none; }
+
+  .eyebrow{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:0.72rem;
+    letter-spacing:0.28em;
+    text-transform:uppercase;
+    color:var(--gold);
+  }
+
+  /* subtle background grain texture */
+  body::before{
+    content:"";
+    position:fixed;
+    inset:0;
+    pointer-events:none;
+    z-index:1;
+    opacity:0.05;
+    background-image:radial-gradient(circle at 1px 1px, #fff 1px, transparent 0);
+    background-size:3px 3px;
+  }
+
+  a:focus-visible, button:focus-visible{
+    outline:2px solid var(--gold-light);
+    outline-offset:3px;
+  }
+
+  /* ---------- NAV ---------- */
+  header{
+    position:fixed;
+    top:0; left:0; right:0;
+    z-index:100;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:1.1rem clamp(1.2rem, 5vw, 3.5rem);
+    background:rgba(15,13,10,0.86);
+    backdrop-filter:blur(8px);
+    border-bottom:1px solid rgba(201,162,39,0.15);
+    transition:padding 0.3s ease;
+  }
+
+  .nav-brand{
+    display:flex;
+    align-items:center;
+    gap:0.65rem;
+  }
+  .nav-brand img{ height:34px; width:34px; border-radius:50%; }
+  .nav-brand span{
+    font-family:'Cormorant Garamond', serif;
+    font-size:1.15rem;
+    letter-spacing:0.08em;
+    text-transform:uppercase;
+    color:var(--parchment);
+  }
+
+  nav ul{
+    display:flex;
+    gap:2.2rem;
+    list-style:none;
+  }
+  nav ul li a{
+    font-size:0.85rem;
+    letter-spacing:0.04em;
+    color:var(--parchment-dim);
+    position:relative;
+    padding-bottom:4px;
+    transition:color 0.25s ease;
+  }
+  nav ul li a::after{
+    content:"";
+    position:absolute; left:0; bottom:0;
+    width:0; height:1px;
+    background:var(--gold);
+    transition:width 0.25s ease;
+  }
+  nav ul li a:hover{ color:var(--gold-light); }
+  nav ul li a:hover::after{ width:100%; }
+
+  .nav-cta{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:0.72rem;
+    letter-spacing:0.1em;
+    text-transform:uppercase;
+    color:var(--ink);
+    background:var(--gold);
+    padding:0.65rem 1.3rem;
+    border-radius:2px;
+    transition:background 0.25s ease, transform 0.25s ease;
+  }
+  .nav-cta:hover{ background:var(--gold-light); transform:translateY(-1px); }
+
+  .nav-toggle{ display:none; }
+
+  /* ---------- HERO ---------- */
+  .hero{
+    position:relative;
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    padding:7rem 1.5rem 4rem;
+    background:
+      radial-gradient(ellipse 60% 50% at 50% 20%, rgba(201,162,39,0.10), transparent 60%),
+      radial-gradient(ellipse 80% 60% at 50% 100%, rgba(92,31,31,0.18), transparent 60%),
+      var(--ink);
+    overflow:hidden;
+  }
+
+  .hero-ring{
+    position:absolute;
+    top:50%; left:50%;
+    width:min(140vw, 900px);
+    height:min(140vw, 900px);
+    transform:translate(-50%,-50%);
+    border:1px solid rgba(201,162,39,0.08);
+    border-radius:50%;
+    animation:spin 90s linear infinite;
+  }
+  .hero-ring.r2{
+    width:min(110vw, 700px);
+    height:min(110vw, 700px);
+    border-color:rgba(201,162,39,0.12);
+    animation-duration:70s;
+    animation-direction:reverse;
+  }
+  @keyframes spin{ to{ transform:translate(-50%,-50%) rotate(360deg); } }
+
+  .hero-logo{
+    position:relative;
+    width:clamp(150px, 22vw, 220px);
+    height:clamp(150px, 22vw, 220px);
+    border-radius:50%;
+    box-shadow:0 0 0 1px rgba(201,162,39,0.35), 0 20px 60px rgba(0,0,0,0.6);
+    margin-bottom:2.2rem;
+    animation:rise 0.9s cubic-bezier(.2,.8,.2,1) both;
+  }
+
+  .hero h1{
+    position:relative;
+    font-size:clamp(2.4rem, 6vw, 4.6rem);
+    color:var(--parchment);
+    line-height:1.05;
+    animation:rise 0.9s 0.15s cubic-bezier(.2,.8,.2,1) both;
+  }
+  .hero h1 em{
+    font-style:italic;
+    color:var(--gold-light);
+  }
+
+  .hero p.sub{
+    position:relative;
+    max-width:520px;
+    margin:1.3rem auto 2.4rem;
+    color:var(--parchment-dim);
+    font-size:1.05rem;
+    animation:rise 0.9s 0.3s cubic-bezier(.2,.8,.2,1) both;
+  }
+
+  @keyframes rise{
+    from{ opacity:0; transform:translateY(16px); }
+    to{ opacity:1; transform:translateY(0); }
+  }
+
+  .hero-ctas{
+    position:relative;
+    display:flex;
+    gap:1rem;
+    flex-wrap:wrap;
+    justify-content:center;
+    animation:rise 0.9s 0.45s cubic-bezier(.2,.8,.2,1) both;
+  }
+
+  .btn-primary{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:0.78rem;
+    letter-spacing:0.1em;
+    text-transform:uppercase;
+    color:var(--ink);
+    background:var(--gold);
+    padding:0.95rem 1.9rem;
+    border-radius:2px;
+    transition:background 0.25s ease, transform 0.25s ease;
+  }
+  .btn-primary:hover{ background:var(--gold-light); transform:translateY(-2px); }
+
+  .btn-ghost{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:0.78rem;
+    letter-spacing:0.1em;
+    text-transform:uppercase;
+    color:var(--parchment);
+    border:1px solid rgba(237,227,204,0.3);
+    padding:0.95rem 1.9rem;
+    border-radius:2px;
+    transition:border-color 0.25s ease, color 0.25s ease, transform 0.25s ease;
+  }
+  .btn-ghost:hover{ border-color:var(--gold-light); color:var(--gold-light); transform:translateY(-2px); }
+
+  .scroll-cue{
+    position:absolute;
+    bottom:2rem; left:50%;
+    transform:translateX(-50%);
+    width:1px; height:46px;
+    background:linear-gradient(to bottom, transparent, var(--gold), transparent);
+    animation:pulse 2s ease-in-out infinite;
+  }
+  @keyframes pulse{ 0%,100%{ opacity:0.3; } 50%{ opacity:1; } }
+
+  /* ---------- SECTION SHELL ---------- */
+  section{
+    position:relative;
+    z-index:2;
+    padding:clamp(4rem,10vw,7rem) clamp(1.2rem, 6vw, 4rem);
+  }
+
+  .section-head{
+    max-width:640px;
+    margin:0 auto 3.2rem;
+    text-align:center;
+  }
+  .section-head h2{
+    font-size:clamp(1.9rem, 4vw, 2.7rem);
+    color:var(--parchment);
+    margin-top:0.6rem;
+  }
+
+  .reveal{
+    opacity:0;
+    transform:translateY(24px);
+    transition:opacity 0.7s ease, transform 0.7s ease;
+  }
+  .reveal.in{ opacity:1; transform:translateY(0); }
+
+  /* ---------- ABOUT ---------- */
+  .about{
+    background:var(--charcoal);
+    border-top:1px solid rgba(201,162,39,0.12);
+    border-bottom:1px solid rgba(201,162,39,0.12);
+  }
+  .about-grid{
+    max-width:1000px;
+    margin:0 auto;
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:3.5rem;
+    align-items:center;
+  }
+  .about-quote{
+    font-family:'Cormorant Garamond', serif;
+    font-style:italic;
+    font-size:clamp(1.3rem, 2.4vw, 1.7rem);
+    color:var(--gold-light);
+    line-height:1.5;
+    border-left:2px solid var(--oxblood-light);
+    padding-left:1.4rem;
+  }
+  .about-body p{
+    color:var(--parchment-dim);
+    margin-bottom:1rem;
+    font-size:0.98rem;
+  }
+  .about-body strong{ color:var(--parchment); font-weight:500; }
+
+  /* ---------- SERVICES : TICKET CARDS ---------- */
+  .services{ background:var(--ink); }
+
+  .ticket-grid{
+    max-width:1100px;
+    margin:0 auto;
+    display:grid;
+    grid-template-columns:repeat(auto-fit, minmax(260px,1fr));
+    gap:2.6rem 2rem;
+  }
+
+  .ticket{
+    position:relative;
+    background:var(--charcoal-2);
+    border:1px solid rgba(201,162,39,0.22);
+    border-radius:6px;
+    padding:1.9rem 1.7rem 1.9rem 2.4rem;
+    display:flex;
+    flex-direction:column;
+    gap:0.9rem;
+    transition:transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+  }
+  .ticket:hover{
+    transform:translateY(-6px);
+    border-color:var(--gold);
+    box-shadow:0 18px 40px rgba(0,0,0,0.45);
+  }
+
+  /* punch hole */
+  .ticket::before{
+    content:"";
+    position:absolute;
+    left:-9px; top:50%;
+    transform:translateY(-50%);
+    width:18px; height:18px;
+    background:var(--ink);
+    border:1px solid rgba(201,162,39,0.35);
+    border-radius:50%;
+  }
+  /* stitched thread edge */
+  .ticket::after{
+    content:"";
+    position:absolute;
+    left:14px; top:0; bottom:0;
+    width:0;
+    border-left:1.5px dashed rgba(140,58,58,0.55);
+  }
+
+  .ticket-row{
+    display:flex;
+    justify-content:space-between;
+    align-items:baseline;
+    gap:1rem;
+  }
+  .ticket-row h3{
+    font-size:1.35rem;
+    color:var(--parchment);
+  }
+  .ticket-price{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:1.05rem;
+    color:var(--gold-light);
+    white-space:nowrap;
+  }
+  .ticket p{
+    color:var(--parchment-dim);
+    font-size:0.9rem;
+  }
+  .ticket-meta{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:0.68rem;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    color:var(--oxblood-light);
+  }
+
+  /* ---------- GALLERY / GRAIN QUOTE STRIP ---------- */
+  .strip{
+    background:
+      linear-gradient(rgba(15,13,10,0.86), rgba(15,13,10,0.9)),
+      repeating-linear-gradient(115deg, rgba(201,162,39,0.05) 0 2px, transparent 2px 26px);
+    border-top:1px solid rgba(201,162,39,0.12);
+    border-bottom:1px solid rgba(201,162,39,0.12);
+    text-align:center;
+  }
+  .strip .display{
+    max-width:760px;
+    margin:0 auto;
+    font-size:clamp(1.5rem, 3vw, 2.2rem);
+    color:var(--parchment);
+    font-style:italic;
+  }
+  .strip .display span{ color:var(--gold-light); }
+
+  /* ---------- HOURS / LOCATION ---------- */
+  .info{ background:var(--charcoal); }
+  .info-grid{
+    max-width:1000px;
+    margin:0 auto;
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:3rem;
+  }
+  .info-card{
+    background:var(--charcoal-2);
+    border:1px solid rgba(201,162,39,0.18);
+    border-radius:6px;
+    padding:2.2rem;
+  }
+  .info-card h3{
+    color:var(--gold-light);
+    font-size:1.25rem;
+    margin-bottom:1.1rem;
+  }
+  .hours-row{
+    display:flex;
+    justify-content:space-between;
+    padding:0.55rem 0;
+    border-bottom:1px solid rgba(237,227,204,0.08);
+    font-size:0.92rem;
+    color:var(--parchment-dim);
+  }
+  .hours-row:last-child{ border-bottom:none; }
+  .hours-row span:last-child{
+    font-family:'IBM Plex Mono', monospace;
+    color:var(--parchment);
+  }
+  .info-card address, .info-card p{
+    font-style:normal;
+    color:var(--parchment-dim);
+    font-size:0.92rem;
+    margin-bottom:0.6rem;
+  }
+  .info-card a.link{
+    color:var(--gold-light);
+    border-bottom:1px solid rgba(232,205,122,0.4);
+  }
+
+  /* ---------- GALLERY ---------- */
+  .gallery{ background:var(--ink); }
+  .gallery-grid{
+    max-width:1100px;
+    margin:0 auto;
+    display:grid;
+    grid-template-columns:repeat(auto-fit, minmax(220px,1fr));
+    gap:1.4rem;
+  }
+  .gallery-tile{
+    position:relative;
+    aspect-ratio:4/5;
+    border-radius:6px;
+    overflow:hidden;
+    background:var(--charcoal-2);
+    border:1px solid rgba(201,162,39,0.2);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+  .gallery-tile img{
+    width:100%; height:100%;
+    object-fit:cover;
+    display:block;
+    transition:transform 0.5s ease;
+  }
+  .gallery-tile:hover img{ transform:scale(1.05); }
+  .gallery-placeholder{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:0.6rem;
+    color:var(--parchment-dim);
+    opacity:0.55;
+    text-align:center;
+    padding:1rem;
+  }
+  .gallery-placeholder svg{ width:34px; height:34px; opacity:0.8; }
+  .gallery-placeholder span{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:0.68rem;
+    letter-spacing:0.08em;
+    text-transform:uppercase;
+  }
+
+  /* ---------- SERVICE GROUPS ---------- */
+  .service-group{ max-width:1100px; margin:0 auto 3.4rem; }
+  .service-group:last-child{ margin-bottom:0; }
+  .service-group-head{
+    display:flex;
+    align-items:baseline;
+    gap:0.8rem;
+    margin-bottom:1.4rem;
+  }
+  .service-group-head h3{
+    font-size:1.15rem;
+    color:var(--gold-light);
+    font-family:'IBM Plex Mono', monospace;
+    font-weight:500;
+    letter-spacing:0.06em;
+    text-transform:uppercase;
+  }
+  .service-group-head::after{
+    content:"";
+    flex:1;
+    height:1px;
+    background:rgba(201,162,39,0.2);
+  }
+
+  /* ---------- TESTIMONIALS ---------- */
+  .testimonials{ background:var(--charcoal); border-top:1px solid rgba(201,162,39,0.12); border-bottom:1px solid rgba(201,162,39,0.12); }
+  .testi-grid{
+    max-width:1100px;
+    margin:0 auto;
+    display:grid;
+    grid-template-columns:repeat(auto-fit, minmax(280px,1fr));
+    gap:2rem;
+  }
+  .testi-card{
+    background:var(--charcoal-2);
+    border:1px solid rgba(201,162,39,0.18);
+    border-radius:6px;
+    padding:1.8rem;
+    display:flex;
+    flex-direction:column;
+    gap:1rem;
+  }
+  .testi-stars{ color:var(--gold); font-size:0.95rem; letter-spacing:0.15em; }
+  .testi-card p{ color:var(--parchment-dim); font-size:0.94rem; font-style:italic; }
+  .testi-name{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:0.78rem;
+    letter-spacing:0.04em;
+    color:var(--parchment);
+    text-transform:uppercase;
+  }
+  .testi-note{
+    text-align:center;
+    max-width:640px;
+    margin:2.4rem auto 0;
+    font-size:0.82rem;
+    color:var(--parchment-dim);
+    opacity:0.75;
+  }
+  .testi-cta{ text-align:center; margin-top:1.6rem; }
+
+  /* ---------- MAP ---------- */
+  .map-wrap{
+    border-radius:6px;
+    overflow:hidden;
+    border:1px solid rgba(201,162,39,0.22);
+    filter:grayscale(0.3) contrast(1.1) brightness(0.9);
+    height:260px;
+  }
+  .map-wrap iframe{ width:100%; height:100%; border:0; display:block; }
+  .schedule-note{
+    display:inline-flex;
+    align-items:center;
+    gap:0.5rem;
+    margin-top:0.4rem;
+    font-family:'Jost', sans-serif;
+    font-size:0.85rem;
+    font-weight:400;
+    letter-spacing:0.01em;
+    color:var(--parchment-dim);
+  }
+  .schedule-note::before{ content:"●"; font-size:0.55rem; color:var(--oxblood-light); flex-shrink:0; }
+
+  /* ---------- FINAL CTA ---------- */
+  .cta-final{
+    text-align:center;
+    background:
+      radial-gradient(ellipse 70% 80% at 50% 0%, rgba(201,162,39,0.10), transparent 60%),
+      var(--ink);
+  }
+  .cta-final h2{
+    font-size:clamp(2rem, 5vw, 3.2rem);
+    color:var(--parchment);
+    margin:0.6rem 0 1.8rem;
+  }
+
+  /* ---------- FOOTER ---------- */
+  footer{
+    background:var(--ink);
+    border-top:1px solid rgba(201,162,39,0.15);
+    padding:2.6rem clamp(1.2rem,6vw,4rem) 2rem;
+    text-align:center;
+  }
+  footer .foot-brand{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:0.6rem;
+    margin-bottom:0.9rem;
+  }
+  footer .foot-brand img{ height:28px; width:28px; border-radius:50%; }
+  footer .foot-brand span{
+    font-family:'Cormorant Garamond', serif;
+    letter-spacing:0.08em;
+    text-transform:uppercase;
+    color:var(--parchment-dim);
+  }
+  footer .foot-links{
+    display:flex;
+    gap:1.6rem;
+    justify-content:center;
+    margin-bottom:1.2rem;
+    font-size:0.85rem;
+    color:var(--parchment-dim);
+  }
+  footer .foot-links a:hover{ color:var(--gold-light); }
+  footer .fine{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:0.7rem;
+    color:var(--parchment-dim);
+    opacity:0.6;
+  }
+
+  @media (max-width: 820px){
+    nav ul{ display:none; }
+    .about-grid, .info-grid{ grid-template-columns:1fr; }
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ animation:none !important; transition:none !important; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="nav-brand">
+    <img src="images/logo.png" alt="Barbearia Schroeder">
+    <span>Schroeder</span>
+  </div>
+  <nav>
+    <ul>
+      <li><a href="#sobre">A Barbearia</a></li>
+      <li><a href="#trabalhos">Trabalhos</a></li>
+      <li><a href="#servicos">Serviços</a></li>
+      <li><a href="#avaliacoes">Avaliações</a></li>
+      <li><a href="#horario">Horário</a></li>
+    </ul>
+  </nav>
+  <a href="https://l.appbarber.com.br/8mzux7bn" class="nav-cta">Agendar</a>
+</header>
+
+<section class="hero">
+  <div class="hero-ring"></div>
+  <div class="hero-ring r2"></div>
+  <img class="hero-logo" src="images/logo.png" alt="Logo Barbearia Schroeder">
+  <h1>Tradição no <em>corte</em>,<br>precisão na <em>navalha</em>.</h1>
+  <p class="sub">Barbearia Schroeder — onde cada atendimento é feito no tempo certo, com técnica clássica e acabamento impecável.<br><span class="schedule-note">Trabalho com agenda, mas sempre dou um jeito de encaixar quem chegar</span></p>
+  <div class="hero-ctas">
+    <a href="https://l.appbarber.com.br/8mzux7bn" class="btn-primary">Agendar horário</a>
+    <a href="#servicos" class="btn-ghost">Ver serviços</a>
+  </div>
+  <div class="scroll-cue"></div>
+</section>
+
+<section class="about" id="sobre">
+  <div class="section-head reveal">
+    <span class="eyebrow">A Casa</span>
+    <h2>Um ofício que se aprende com as mãos</h2>
+  </div>
+  <div class="about-grid">
+    <p class="about-quote reveal">"Não cortamos apenas cabelo — cuidamos da confiança de quem senta na nossa cadeira."</p>
+    <div class="about-body reveal">
+      <p>A <strong>Barbearia Schroeder</strong> nasceu da vontade de trazer de volta o ritual clássico da barbearia: tesoura, navalha e conversa boa, sem pressa.</p>
+      <p>Aqui, cada corte é pensado para o seu rosto e para o seu estilo — do clássico ao contemporâneo, sempre com acabamento de precisão.</p>
+      <p>Ambiente pensado para ser um respiro no meio do dia: música baixa, café quente e atendimento de quem entende do assunto.</p>
+    </div>
+  </div>
+</section>
+
+<section class="gallery" id="trabalhos">
+  <div class="section-head reveal">
+    <span class="eyebrow">Trabalhos</span>
+    <h2>Cortes que já saíram daqui</h2>
+  </div>
+  <div class="gallery-grid" id="gallery-grid">
+    <div class="gallery-tile reveal">
+      <div class="gallery-placeholder">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="6" cy="6" r="2.5"/><circle cx="6" cy="18" r="2.5"/><path d="M8.5 7.5L20 18M8.5 16.5L20 6"/></svg>
+        <span>Foto em breve</span>
+      </div>
+    </div>
+    <div class="gallery-tile reveal">
+      <div class="gallery-placeholder">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="6" cy="6" r="2.5"/><circle cx="6" cy="18" r="2.5"/><path d="M8.5 7.5L20 18M8.5 16.5L20 6"/></svg>
+        <span>Foto em breve</span>
+      </div>
+    </div>
+    <div class="gallery-tile reveal">
+      <div class="gallery-placeholder">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="6" cy="6" r="2.5"/><circle cx="6" cy="18" r="2.5"/><path d="M8.5 7.5L20 18M8.5 16.5L20 6"/></svg>
+        <span>Foto em breve</span>
+      </div>
+    </div>
+    <div class="gallery-tile reveal">
+      <div class="gallery-placeholder">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="6" cy="6" r="2.5"/><circle cx="6" cy="18" r="2.5"/><path d="M8.5 7.5L20 18M8.5 16.5L20 6"/></svg>
+        <span>Foto em breve</span>
+      </div>
+    </div>
+  </div>
+  <p class="testi-note reveal" id="gallery-note">* Espaços de exemplo — entre em <code>/admin</code> pra subir as fotos reais dos seus trabalhos.</p>
+</section>
+
+<section class="services" id="servicos">
+  <div class="section-head reveal">
+    <span class="eyebrow">Serviços</span>
+    <h2>Da régua no corte ao fio da navalha</h2>
+  </div>
+  <div class="service-group">
+    <div class="service-group-head reveal"><h3>Cortes &amp; Barba</h3></div>
+    <div class="ticket-grid">
+      <div class="ticket reveal">
+        <span class="ticket-meta">Nº 01</span>
+        <div class="ticket-row"><h3>Corte</h3><span class="ticket-price">R$ 50</span></div>
+        <p>Corte na tesoura e máquina, com finalização.</p>
+      </div>
+      <div class="ticket reveal">
+        <span class="ticket-meta">Nº 02</span>
+        <div class="ticket-row"><h3>Barba</h3><span class="ticket-price">R$ 50</span></div>
+        <p>Toalha quente e navalha para modelar e alinhar.</p>
+      </div>
+      <div class="ticket reveal">
+        <span class="ticket-meta">Nº 03</span>
+        <div class="ticket-row"><h3>Corte + Barba</h3><span class="ticket-price">R$ 90</span></div>
+        <p>O ritual completo da casa, num único horário.</p>
+      </div>
+      <div class="ticket reveal">
+        <span class="ticket-meta">Nº 04</span>
+        <div class="ticket-row"><h3>Corte Raspado</h3><span class="ticket-price">R$ 35</span></div>
+        <p>Acabamento uniforme na máquina.</p>
+      </div>
+      <div class="ticket reveal">
+        <span class="ticket-meta">Nº 05</span>
+        <div class="ticket-row"><h3>Corte + Sobrancelha</h3><span class="ticket-price">R$ 65</span></div>
+        <p>Corte com acabamento na sobrancelha incluso.</p>
+      </div>
+      <div class="ticket reveal">
+        <span class="ticket-meta">Nº 06</span>
+        <div class="ticket-row"><h3>Corte + Hidratação</h3><span class="ticket-price">R$ 80</span></div>
+        <p>Corte com tratamento de hidratação capilar.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="service-group">
+    <div class="service-group-head reveal"><h3>Combos Completos</h3></div>
+    <div class="ticket-grid">
+      <div class="ticket reveal">
+        <span class="ticket-meta">Nº 07</span>
+        <div class="ticket-row"><h3>Corte + Depilação de Nariz</h3><span class="ticket-price">R$ 65</span></div>
+        <p>Corte com depilação de nariz inclusa.</p>
+      </div>
+      <div class="ticket reveal">
+        <span class="ticket-meta">Nº 08</span>
+        <div class="ticket-row"><h3>Corte + Depilação de Orelha</h3><span class="ticket-price">R$ 65</span></div>
+        <p>Corte com depilação de orelha inclusa.</p>
+      </div>
+      <div class="ticket reveal">
+        <span class="ticket-meta">Nº 09</span>
+        <div class="ticket-row"><h3>Corte e Barba + Dep. Nariz</h3><span class="ticket-price">R$ 100</span></div>
+        <p>Combo completo com depilação de nariz.</p>
+      </div>
+      <div class="ticket reveal">
+        <span class="ticket-meta">Nº 10</span>
+        <div class="ticket-row"><h3>Corte e Barba + Dep. Orelha</h3><span class="ticket-price">R$ 100</span></div>
+        <p>Combo completo com depilação de orelha.</p>
+      </div>
+      <div class="ticket reveal">
+        <span class="ticket-meta">Nº 11</span>
+        <div class="ticket-row"><h3>Corte e Barba + Dep. Orelha e Nariz</h3><span class="ticket-price">R$ 120</span></div>
+        <p>O pacote mais completo da casa.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="service-group">
+    <div class="service-group-head reveal"><h3>Detalhes &amp; Tratamentos</h3></div>
+    <div class="ticket-grid">
+      <div class="ticket reveal">
+        <span class="ticket-meta">Nº 12</span>
+        <div class="ticket-row"><h3>Sobrancelha</h3><span class="ticket-price">R$ 15</span></div>
+        <p>Acabamento alinhado ao formato do rosto.</p>
+      </div>
+      <div class="ticket reveal">
+        <span class="ticket-meta">Nº 13</span>
+        <div class="ticket-row"><h3>Depilação de Nariz</h3><span class="ticket-price">R$ 20</span></div>
+        <p>Serviço avulso de depilação de nariz.</p>
+      </div>
+      <div class="ticket reveal">
+        <span class="ticket-meta">Nº 14</span>
+        <div class="ticket-row"><h3>Depilação de Orelha</h3><span class="ticket-price">R$ 20</span></div>
+        <p>Serviço avulso de depilação de orelha.</p>
+      </div>
+      <div class="ticket reveal">
+        <span class="ticket-meta">Nº 15</span>
+        <div class="ticket-row"><h3>Progressiva</h3><span class="ticket-price">R$ 60</span></div>
+        <p>Alisamento e alinhamento dos fios.</p>
+      </div>
+      <div class="ticket reveal">
+        <span class="ticket-meta">Nº 16</span>
+        <div class="ticket-row"><h3>Luzes</h3><span class="ticket-price">R$ 140</span></div>
+        <p>Mechas e clareamento para dar contraste ao visual.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="service-group">
+    <div class="service-group-head reveal"><h3>Pacotes</h3></div>
+    <div class="ticket-grid">
+      <div class="ticket reveal">
+        <span class="ticket-meta">Nº 17</span>
+        <div class="ticket-row"><h3>Pacote de 4 Cortes</h3><span class="ticket-price">R$ 170</span></div>
+        <p>Quatro cortes para manter o visual sempre em dia.</p>
+      </div>
+      <div class="ticket reveal">
+        <span class="ticket-meta">Nº 18</span>
+        <div class="ticket-row"><h3>Pacote de 4 Corte + Barba</h3><span class="ticket-price">R$ 280</span></div>
+        <p>Quatro combos completos de corte e barba.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="testimonials" id="avaliacoes">
+  <div class="section-head reveal">
+    <span class="eyebrow">Quem já passou pela cadeira</span>
+    <h2>Avaliações dos clientes</h2>
+  </div>
+  <div class="testi-grid">
+    <div class="testi-card reveal">
+      <span class="testi-stars">★★★★★</span>
+      <p>"Atendimento impecável, ambiente muito bacana. Recomendo de olhos fechados."</p>
+      <span class="testi-name">— Cliente Google</span>
+    </div>
+    <div class="testi-card reveal">
+      <span class="testi-stars">★★★★★</span>
+      <p>"Corte no capricho e o Wellynton entende exatamente o que a gente quer."</p>
+      <span class="testi-name">— Cliente Google</span>
+    </div>
+    <div class="testi-card reveal">
+      <span class="testi-stars">★★★★★</span>
+      <p>"Sensacional, atendimento de primeira. Virei cliente fixo."</p>
+      <span class="testi-name">— Cliente Google</span>
+    </div>
+  </div>
+  <p class="testi-note reveal">* Avaliações de exemplo — substitua pelos comentários reais do seu perfil do Google (copie o texto e o nome de quem avaliou).</p>
+  <div class="testi-cta reveal">
+    <a href="https://www.google.com/maps/place/Barbearia+Schroeder/@-25.951883,-49.8196751,9z/data=!4m10!1m2!2m1!1sbarbearia+schroeder!3m6!1s0x94dcfb14eee758fb:0xfa4d24301de5fe73!8m2!3d-25.479774!4d-49.2551752!15sChNiYXJiZWFyaWEgc2Nocm9lZGVykgELYmFyYmVyX3Nob3DgAQA!16s%2Fg%2F11w1vk5zms" class="btn-ghost">Ver todas no Google →</a>
+  </div>
+</section>
+
+<section class="strip">
+  <p class="display reveal">"Cliente satisfeito sai pela porta <span>com o corte</span>, mas volta pela <span>confiança</span>."</p>
+</section>
+
+<section class="info" id="horario">
+  <div class="section-head reveal">
+    <span class="eyebrow">Informações</span>
+    <h2>Quando e onde te esperamos</h2>
+  </div>
+  <div class="info-grid">
+    <div class="info-card reveal">
+      <h3>Horário de atendimento</h3>
+      <div class="hours-row"><span>Terça — Sexta</span><span>10h — 19h</span></div>
+      <div class="hours-row"><span>Sábado</span><span>09h — 18h</span></div>
+      <div class="hours-row"><span>Domingo e Segunda</span><span>Fechado</span></div>
+      <span class="schedule-note">Prioridade para horário agendado</span>
+    </div>
+    <div class="info-card reveal">
+      <h3>Localização e contato</h3>
+      <address>Rua João Soares Barcelos, 652<br>Curitiba, PR</address>
+      <p>WhatsApp: (41) 99204-8257</p>
+      <p>Instagram: <a class="link" href="https://www.instagram.com/barbearia_schroeder/" target="_blank" rel="noopener">@barbearia_schroeder</a> · <a class="link" href="https://www.instagram.com/obarbeirowellynton/" target="_blank" rel="noopener">@obarbeirowellynton</a></p>
+      <p><a class="link" href="https://l.appbarber.com.br/8mzux7bn" target="_blank" rel="noopener">Agendar horário online →</a></p>
+      <div class="map-wrap">
+        <iframe src="https://maps.google.com/maps?q=Rua+Jo%C3%A3o+Soares+Barcelos+652+Curitiba+PR&z=16&output=embed" loading="lazy" title="Localização Barbearia Schroeder"></iframe>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="cta-final" id="contato">
+  <div class="section-head reveal">
+    <span class="eyebrow">Vamos marcar?</span>
+    <h2>Seu horário te espera</h2>
+  </div>
+  <div class="hero-ctas reveal" style="justify-content:center;">
+    <a href="https://l.appbarber.com.br/8mzux7bn" class="btn-primary">Agendar horário online</a>
+    <a href="https://wa.me/5541992048257" class="btn-ghost">Chamar no WhatsApp</a>
+  </div>
+</section>
+
+<footer>
+  <div class="foot-brand">
+    <img src="images/logo.png" alt="Barbearia Schroeder">
+    <span>Barbearia Schroeder</span>
+  </div>
+  <div class="foot-links">
+    <a href="#servicos">Serviços</a>
+    <a href="#avaliacoes">Avaliações</a>
+    <a href="https://www.instagram.com/barbearia_schroeder/" target="_blank" rel="noopener">Instagram</a>
+    <a href="https://wa.me/5541992048257" target="_blank" rel="noopener">WhatsApp</a>
+  </div>
+  <p class="fine">© 2026 Barbearia Schroeder. Todos os direitos reservados.</p>
+</footer>
+
+<script>
+  const revealEls = document.querySelectorAll('.reveal');
+  const io = new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{
+      if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); }
+    });
+  }, { threshold:0.15 });
+  revealEls.forEach(el=>io.observe(el));
+
+  // Carrega as fotos do portfólio cadastradas em /admin (data/gallery.json)
+  fetch('data/gallery.json')
+    .then(r => r.ok ? r.json() : null)
+    .then(data => {
+      if(!data || !Array.isArray(data.photos) || data.photos.length === 0) return;
+      const grid = document.getElementById('gallery-grid');
+      const note = document.getElementById('gallery-note');
+      grid.innerHTML = data.photos.map(p => `
+        <div class="gallery-tile reveal in">
+          <img src="${p.image}" alt="${p.alt || 'Trabalho Barbearia Schroeder'}" loading="lazy">
+        </div>
+      `).join('');
+      if(note) note.remove();
+    })
+    .catch(() => { /* mantém os placeholders se o arquivo ainda não existir */ });
+</script>
+
+<script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+<script>
+  if (window.netlifyIdentity) {
+    window.netlifyIdentity.on("init", user => {
+      if (!user) {
+        window.netlifyIdentity.on("login", () => {
+          document.location.href = "/admin/";
+        });
+      }
+    });
+  }
+</script>
+
+</body>
+</html>
