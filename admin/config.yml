@@ -17,3 +17,23 @@ collections:
               { label: "Imagem", name: "image", widget: "image" },
               { label: "Descrição (opcional)", name: "alt", widget: "string", required: false }
             ] }
+
+  - name: "services"
+    label: "Serviços e Preços"
+    files:
+      - name: "services"
+        label: "Tabela de Serviços"
+        file: "data/services.json"
+        fields:
+          - label: "Grupos de Serviços"
+            name: "groups"
+            widget: "list"
+            fields:
+              - { label: "Nome do Grupo", name: "title", widget: "string" }
+              - label: "Serviços"
+                name: "items"
+                widget: "list"
+                fields:
+                  - { label: "Nome do Serviço", name: "name", widget: "string" }
+                  - { label: "Preço (R$)", name: "price", widget: "string" }
+                  - { label: "Descrição", name: "description", widget: "string", required: false }
